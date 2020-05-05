@@ -44,6 +44,11 @@ Some good tips and tricks [HERE](https://cmdlinetips.com/category/linux-tips/)
       - [Select by [row, col] index](#select-by-row-col-index)
       - [Print interesting data](#print-interesting-data)
       - [Append a dataframe to another dataframe](#append-a-dataframe-to-another-dataframe)
+      - [Looping a dataframe](#looping-a-dataframe)
+      - [Cutting data](#cutting-data)
+      - [Pivot data](#pivot-data)
+    - [Scikit](#scikit)
+      - [Feature Importance Tree](#feature-importance-tree)
     - [Format float](#format-float)
     - [JSON file operations](#json-file-operations)
       - [Save to JSON file](#save-to-json-file)
@@ -64,6 +69,8 @@ Some good tips and tricks [HERE](https://cmdlinetips.com/category/linux-tips/)
       - [Create a custom histogram](#create-a-custom-histogram)
     - [Date and time](#date-and-time)
       - [Get a list of months](#get-a-list-of-months)
+    - [Jupyter notebooks](#jupyter-notebooks)
+      - [Run other code](#run-other-code)
   - [C++](#c)
     - [Iterators](#iterators)
       - [Get the iterator index](#get-the-iterator-index)
@@ -485,6 +492,51 @@ b = pd.DataFrame(data=some_data)
 # append returns a new dataframe
 a = a.append(b)
 ```
+#### Looping a dataframe
+
+Employ zip, it is the fastest way.
+
+```python
+def loop_with_zip(df):
+    temp = 0
+    for a, b in zip(df['A'], df['B']):
+        temp += a + b
+    return temp
+```
+
+If possible, perform the pandas or numpy builtin function
+
+Pandas
+```python
+def using_pandas_builtin(df):
+    return (df['A'] + df['B']).sum()
+```
+Numpy
+```python
+def using_pandas_builtin(df):
+    return (df['A'].values + df['B'].values).sum()
+```
+
+#### Cutting data
+
+Cut creates subsets from data
+```python
+pd.cut(df['Age'], 5, labels=['G1', 'G2', 'G3', 'G4', 'G5'])
+```
+#### Pivot data
+
+```python
+df.pivot_table(index='Sex', columns='Pclass', values='Survived', aggfunc='mean', margin=True)
+```
+
+### Scikit
+
+#### Feature Importance Tree
+
+```python
+importances = pd.DataFrame({'feature':X_train.columns,'importance':np.round(clf.feature_importances_,3)})
+importances = importances.sort_values('importance',ascending=False)
+```
 
 ### Format float
 
@@ -798,6 +850,26 @@ plt.show()
 import datetime
 
 months = [(i, datetime.date(2008, i, 1).strftime("%B")) for i in range(1,13)]
+```
+### Jupyter notebooks
+
+#### Run other code
+
+triagle_hist.py
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set(style="darkgrid")
+
+if __name__ == '__main__':
+    h = plt.hist(np.random.triangular(0, 5, 9, 1000), bins=100, linewidth=0)
+    plt.show()
+```
+
+```python
+%run triangle_hist.py
 ```
 
 ## C++
