@@ -45,8 +45,14 @@ Some good tips and tricks [HERE](https://cmdlinetips.com/category/linux-tips/)
       - [Print interesting data](#print-interesting-data)
       - [Append a dataframe to another dataframe](#append-a-dataframe-to-another-dataframe)
       - [Looping a dataframe](#looping-a-dataframe)
+      - [From categorical to numerical](#from-categorical-to-numerical)
       - [Cutting data](#cutting-data)
       - [Pivot data](#pivot-data)
+      - [Groupy](#groupby)
+      - [Cross Tabulation](#cross-tabulation)
+      - [Faster apply](#faster-apply)
+      - [Profile Report](#profile-report)
+      - [Cufflinks](#cufflinks)
     - [Scikit](#scikit)
       - [Feature Importance Tree](#feature-importance-tree)
     - [Format float](#format-float)
@@ -71,6 +77,7 @@ Some good tips and tricks [HERE](https://cmdlinetips.com/category/linux-tips/)
       - [Get a list of months](#get-a-list-of-months)
     - [Jupyter notebooks](#jupyter-notebooks)
       - [Run other code](#run-other-code)
+      - [Multiple cells output](#multiple-cells-output)
   - [C++](#c)
     - [Iterators](#iterators)
       - [Get the iterator index](#get-the-iterator-index)
@@ -516,10 +523,16 @@ Numpy
 def using_pandas_builtin(df):
     return (df['A'].values + df['B'].values).sum()
 ```
+#### From categorical to numerical
+
+```python
+origin_dummies = pd.get_dummies(mpg['origin'])
+```
 
 #### Cutting data
 
-Cut creates subsets from data
+Cut creates subsets from data (equal range)
+qcut based on quartiles
 ```python
 pd.cut(df['Age'], 5, labels=['G1', 'G2', 'G3', 'G4', 'G5'])
 ```
@@ -527,6 +540,54 @@ pd.cut(df['Age'], 5, labels=['G1', 'G2', 'G3', 'G4', 'G5'])
 
 ```python
 df.pivot_table(index='Sex', columns='Pclass', values='Survived', aggfunc='mean', margin=True)
+```
+#### Groupby
+
+```python
+invoices.groupby(['Company Id','Type of Meal']).agg(
+    {'Meal Price':np.mean}
+)
+invoices.groupby(['Company Id','Type of Meal']).agg(
+    Avg_Price = pd.NamedAgg(column='Meal Price', aggfunc=np.mean)
+)
+
+```
+
+#### Cross tabulation
+
+```python
+pd.crosstab(index = mpg['origin'], columns = mpg['model_year'], values = mpg['mpg'], aggfunc = 'mean')
+```
+
+
+#### Faster apply
+
+```python
+import pandas as pd
+import swifter
+
+df.swifter.apply(lambda x: x.sum() - x.min())
+```
+
+#### Profile Report
+
+Better than .info() or .describe()
+```python
+df = pd.read_csv('file.csv')
+df.profile_report()
+```
+
+#### Cufflinks
+
+```python
+!pip install cufflinks --upgrade
+```
+
+```python
+import cufflinks as cf
+cf.go_offline()
+df.iplot() # nice interactive plot
+df.scatter_matrix()
 ```
 
 ### Scikit
@@ -550,6 +611,11 @@ print("Value of a: {0:.4f}".format(a))
 print("Value of a: %.2f" % a)
 
 print("Value of a: %.4f" % round(a, 4))
+
+item = “Purple Cup”
+amount = 5
+price = amount * 3.25
+print(f’Item: {item} — Amount: {amount} — Price: {price:.2f}’)
 ```
 
 ### JSON file operations
@@ -870,6 +936,12 @@ if __name__ == '__main__':
 
 ```python
 %run triangle_hist.py
+```
+#### Multiple cells output
+
+```python
+from IPython.core.interactiveshell import InteractiveShell
+InteractiveShell.ast_node_interactivity = "all"
 ```
 
 ## C++
